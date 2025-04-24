@@ -9,36 +9,39 @@
 // Execute `rustlings hint errors6` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 use std::num::ParseIntError;
 
 // This is a custom error type that we will be using in `parse_pos_nonzero()`.
 #[derive(PartialEq, Debug)]
-enum ParsePosNonzeroError {
-    Creation(CreationError),
-    ParseInt(ParseIntError),
+enum ParsePosNonzeroError {         // 自定义枚举错误类型 ParsePosNonzeroError -- 有两个变体
+    Creation(CreationError),        // 表示在创建 PositiveNonzeroInteger 实例时出现的错误
+    ParseInt(ParseIntError),        // 表示在将字符串解析为整数时出现的错误
 }
 
 impl ParsePosNonzeroError {
     fn from_creation(err: CreationError) -> ParsePosNonzeroError {
-        ParsePosNonzeroError::Creation(err)
+        ParsePosNonzeroError::Creation(err)     //将 CreationError 转换为 ParsePosNonzeroError::Creation 类型
     }
     // TODO: add another error conversion function here.
     // fn from_parseint...
+    fn from_parseint(err: ParseIntError) -> ParsePosNonzeroError {
+        ParsePosNonzeroError::ParseInt(err)     //将 ParseIntError 转换为 ParsePosNonzeroError::ParseInt 类型
+    }
 }
 
 fn parse_pos_nonzero(s: &str) -> Result<PositiveNonzeroInteger, ParsePosNonzeroError> {
     // TODO: change this to return an appropriate error instead of panicking
     // when `parse()` returns an error.
-    let x: i64 = s.parse().unwrap();
-    PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation)
+    let x: i64 = s.parse().map_err(ParsePosNonzeroError::from_parseint)?;       //如果解析失败，parse 方法会返回 Err(ParseIntError)，map_err 方法将 ParseIntError 转换为 ParsePosNonzeroError::ParseInt 类型的错误，? 运算符会将这个错误返回给调用者
+    PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation) //调用 PositiveNonzeroInteger::new(x) 方法尝试创建 PositiveNonzeroInteger 实例。
+    //如果创建失败，new 方法会返回 Err(CreationError)，map_err 方法将 CreationError 转换为 ParsePosNonzeroError::Creation 类型的错误。如果创建成功，返回 Ok(PositiveNonzeroInteger)。
 }
 
 // Don't change anything below this line.
 
 #[derive(PartialEq, Debug)]
-struct PositiveNonzeroInteger(u64);
+struct PositiveNonzeroInteger(u64);     //是一个元组结构体，用于存储正的非零整数
 
 #[derive(PartialEq, Debug)]
 enum CreationError {
@@ -61,7 +64,8 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_parse_error() {
+    // 测试输入字符串无法解析为整数的情况，期望返回 Err(ParsePosNonzeroError::ParseInt)
+    fn test_parse_error() {     
         // We can't construct a ParseIntError, so we have to pattern match.
         assert!(matches!(
             parse_pos_nonzero("not a number"),
@@ -70,6 +74,7 @@ mod test {
     }
 
     #[test]
+    // 测试输入为负数的情况，期望返回 Err(ParsePosNonzeroError::Creation(CreationError::Negative))
     fn test_negative() {
         assert_eq!(
             parse_pos_nonzero("-555"),
@@ -78,6 +83,7 @@ mod test {
     }
 
     #[test]
+    // 测试输入为零的情况，期望返回 Err(ParsePosNonzeroError::Creation(CreationError::Zero))
     fn test_zero() {
         assert_eq!(
             parse_pos_nonzero("0"),
@@ -86,6 +92,7 @@ mod test {
     }
 
     #[test]
+    // 测试输入为正的非零整数的情况，期望返回 Ok(PositiveNonzeroInteger)
     fn test_positive() {
         let x = PositiveNonzeroInteger::new(42);
         assert!(x.is_ok());

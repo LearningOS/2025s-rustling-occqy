@@ -8,17 +8,17 @@
 // must add fruit to the basket so that there is at least one of each kind and
 // more than 11 in total - we have a lot of mouths to feed. You are not allowed
 // to insert any more of these fruits!
-//
+// //
 // Make me pass the tests!
 //
 // Execute `rustlings hint hashmaps2` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+
 
 use std::collections::HashMap;
 
-#[derive(Hash, PartialEq, Eq)]
+#[derive(Hash, PartialEq, Eq, Clone)]
 enum Fruit {
     Apple,
     Banana,
@@ -36,10 +36,18 @@ fn fruit_basket(basket: &mut HashMap<Fruit, u32>) {
         Fruit::Pineapple,
     ];
 
-    for fruit in fruit_kinds {
+    for fruit in &fruit_kinds {
         // TODO: Insert new fruits if they are not already present in the
         // basket. Note that you are not allowed to put any type of fruit that's
         // already present!
+        if!basket.contains_key(&fruit) {
+            basket.insert(fruit.clone(), 1);
+        }
+        if basket.values().sum::<u32>() <= 11 {
+            if let Some(fruit) = fruit_kinds.iter().find(|f|!basket.contains_key(f)) {
+                *basket.entry(fruit.clone()).or_insert(0) += 1;
+            }
+        }
     }
 }
 

@@ -10,12 +10,15 @@
 // Execute `rustlings hint tests1` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+
 
 #[cfg(test)]
 mod tests {
     #[test]
+    // 在 Rust 中，assert! 宏用于断言某个条件是否为 true。它的基本语法是 assert!(condition)，
+    // 其中 condition 是一个布尔表达式。如果 condition 为 true，断言通过；
+    // 如果为 false，断言失败，程序会抛出一个错误。
     fn you_can_assert() {
-        assert!();
+        assert!(true);
     }
 }

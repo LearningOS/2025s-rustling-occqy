@@ -20,41 +20,49 @@
 //
 // No hints this time!
 
-// I AM NOT DONE
 
-pub enum Command {
-    Uppercase,
-    Trim,
-    Append(usize),
+//定义命令枚举
+pub enum Command {      
+    Uppercase,              // 字符串转大写指令--无关联数据的枚举变体
+    Trim,                   // 去除首尾空格指令--无关联数据的枚举变体
+    Append(usize),          // 追加指定次数"bar"的指令（携带参数）
 }
 
-mod my_module {
+// 功能实现模块
+mod my_module {         
     use super::Command;
 
     // TODO: Complete the function signature!
-    pub fn transformer(input: ???) -> ??? {
+    pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
         // TODO: Complete the output declaration!
-        let mut output: ??? = vec![];
-        for (string, command) in input.iter() {
+        let mut output: Vec<String> = vec![];
+        for (string, command) in input.into_iter() {
             // TODO: Complete the function body. You can do it!
+            let processed = match command {         //processed为中间变量，代码可读性提升，所有权明确，扩展灵活性
+                Command::Uppercase => string.to_uppercase(),
+                Command::Trim => string.trim().to_string(),
+                Command::Append(n) => format!("{}{}", string, "bar".repeat(n)),
+            };
+            output.push(processed);
         }
         output
     }
 }
 
+// 单元测试模块
 #[cfg(test)]
 mod tests {
     // TODO: What do we need to import to have `transformer` in scope?
-    use ???;
+    use super::my_module::transformer;      //// 从父模块导入 transformer
     use super::Command;
 
     #[test]
     fn it_works() {
         let output = transformer(vec![
-            ("hello".into(), Command::Uppercase),
-            (" all roads lead to rome! ".into(), Command::Trim),
-            ("foo".into(), Command::Append(1)),
-            ("bar".into(), Command::Append(5)),
+            ("hello".to_string(), Command::Uppercase),
+            (" all roads lead to rome! ".to_string(), Command::Trim),
+            ("foo".to_string(), Command::Append(1)),
+            ("bar".to_string(), Command::Append(5)),
         ]);
         assert_eq!(output[0], "HELLO");
         assert_eq!(output[1], "all roads lead to rome!");

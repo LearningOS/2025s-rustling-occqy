@@ -19,14 +19,16 @@
 // Execute `rustlings hint errors2` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+
 
 use std::num::ParseIntError;
 
-pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
+pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {  //Err(ParseIntError) 的原始数据是一个 Result 枚举的 Err 变体，
+                                                                        //其中包含了一个 ParseIntError 实例，该实例存储了字符串解析整数失败的相关错误信息
     let processing_fee = 1;
     let cost_per_item = 5;
-    let qty = item_quantity.parse::<i32>();
+    // 使用 ? 运算符处理 parse 可能返回的错误
+    let qty = item_quantity.parse::<i32>()?;
 
     Ok(qty * cost_per_item + processing_fee)
 }
@@ -45,6 +47,6 @@ mod tests {
         assert_eq!(
             total_cost("beep boop").unwrap_err().to_string(),
             "invalid digit found in string"
-        );
+        );//to_string() 方法会将 ParseIntError 转换为一个人类可读的字符串
     }
 }

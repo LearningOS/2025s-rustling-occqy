@@ -19,19 +19,24 @@ struct Person {
 }
 
 // We will use this error type for the `FromStr` implementation.
+// 我们将使用这个错误类型来实现 FromStr
 #[derive(Debug, PartialEq)]
 enum ParsePersonError {
     // Empty input string
+    // 空输入字符串
     Empty,
     // Incorrect number of fields
+    // 字段数量不正确
     BadLen,
     // Empty name field
+    // 空名字字段
     NoName,
     // Wrapped error from parse::<usize>()
+    // 来自 parse::<usize>() 的包装错误
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
+
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
@@ -49,11 +54,44 @@ enum ParsePersonError {
 // you want to return a string error message, you can do so via just using
 // return `Err("my error message".into())`.
 
+// 实现 FromStr 特征
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+    
+        // Step 1:  如果提供的字符串长度为 0，应返回错误
+        if s.len() == 0 {
+            return Err(ParsePersonError::Empty);
+        }
+
+        // Step 2:  根据字符串中的逗号对其进行分割
+        let parts: Vec<&str> = s.split(',').collect();
+
+        // Step 3: 分割后应只返回 2 个元素，否则返回错误
+        if parts.len() != 2 {
+            return Err(ParsePersonError::BadLen)
+        }
+
+        // Step 4: 从分割操作中提取第一个元素并将其用作名字
+        let name = parts[0].trim();
+        if name.is_empty() {
+            return Err(ParsePersonError::NoName);
+        }
+
+        // Step 5: 从分割操作中提取另一个元素，并将其解析为 usize 类型作为年龄
+        let age = match parts[1].trim().parse::<usize>() {
+            Ok(age) => age,
+            Err(e) => return Err(ParsePersonError::ParseInt(e)),
+        };
+
+        // 如果一切顺利，则返回一个包含 Person 对象的 Result
+        Ok(Person {
+            name: name.to_string(),
+            age,
+        })
     }
 }
+
 
 fn main() {
     let p = "Mark,20".parse::<Person>().unwrap();

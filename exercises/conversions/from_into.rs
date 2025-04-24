@@ -15,6 +15,7 @@ struct Person {
 
 // We implement the Default trait to use it as a fallback
 // when the provided string is not convertible into a Person object
+// 实现 Default 特征，以便在提供的字符串无法转换为 Person 对象时作为备用方案
 impl Default for Person {
     fn default() -> Person {
         Person {
@@ -40,17 +41,105 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
 
+
+// 实现 From<&str> 特征，将 &str 类型的字符串转换为 Person 对象
 impl From<&str> for Person {
+    // fn from(s: &str) -> Person {     无法通过测试
+    //     // 步骤 1：如果提供的字符串长度为 0，则返回 Person 的默认值
+    //     if s.len() == 0 {
+    //         return Person::default();
+    //     }
+    //      // 步骤 2：根据字符串中的逗号对其进行分割
+    //     let parts:Vec<&str> = s.split(',').collect();
+    //     // 步骤 3：从分割操作中提取第一个元素并将其用作名字
+    //     let name = parts.get(0).unwrap_or(&"").to_string();
+    //      // 步骤 4：如果名字为空，则返回 Person 的默认值
+    //     if name.is_empty() {
+    //         return Person::default();
+    //     }
+    //     // 步骤 5：从分割操作中提取另一个元素，并将其解析为 usize 类型作为年龄
+    //     if parts.len() < 2 {
+    //         return Person::default();
+    //     }
+    //     let age_str = parts[1];
+    //     // 尝试将年龄字符串解析为 usize 类型
+    //     let age = match age_str.parse::<usize>() {
+    //         Ok(age) => age,
+    //         Err(_) => return Person::default(),
+    //     };
+
+    //     // 若以上步骤都成功，返回一个包含结果的 Person 对象实例
+    //     Person { name, age }
+    // }
+
+    // fn from(s: &str) -> Person {
+    //     // Step 1: Check for empty string
+    //     if s.is_empty() {
+    //         return Person::default();
+    //     }
+
+    //     // Step 2: Split string by commas
+    //     let parts: Vec<&str> = s.split(',').collect();
+
+    //     // Check if exactly two parts exist
+    //     if parts.len() != 2 {
+    //         return Person::default();
+    //     }
+
+    //     let name = parts[0].trim();
+
+    //     // Step 4: Validate name
+    //     if name.is_empty() {
+    //         return Person::default();
+    //     }
+
+    //     // Step 5: Parse age
+    //     match parts[1].trim().parse::<usize>() {
+    //         Ok(age) => Person {
+    //             name: name.to_string(),
+    //             age,
+    //         },
+    //         Err(_) => Person::default(),
+    //     }
+    // }
+
+
     fn from(s: &str) -> Person {
+        // 步骤 1：如果提供的字符串长度为 0，则返回 Person 的默认值
+        if s.len() == 0 {
+            return Person::default();
+        }
+        // 步骤 2：根据字符串中的逗号对其进行分割
+        let parts: Vec<&str> = s.split(',').collect();
+        // 步骤 3：从分割操作中提取第一个元素并将其用作名字
+        let name = parts.get(0).unwrap_or(&"").to_string();
+        // 步骤 4：如果名字为空，则返回 Person 的默认值
+        if name.is_empty() {
+            return Person::default();
+        }
+        // 步骤 5：从分割操作中提取另一个元素，并将其解析为 usize 类型作为年龄
+        // 确保分割后的部分只有两个（名字和年龄），多余部分则返回默认值
+        if parts.len() != 2 {
+            return Person::default();
+        }
+        let age_str = parts[1];
+        // 尝试将年龄字符串解析为 usize 类型
+        let age = match age_str.parse::<usize>() {
+            Ok(age) => age,
+            Err(_) => return Person::default(),
+        };
+
+        // 若以上步骤都成功，返回一个包含结果的 Person 对象实例
+        Person { name, age }
     }
 }
 
 fn main() {
-    // Use the `from` function
+    // Use the `from` function      // 使用 `from` 函数
     let p1 = Person::from("Mark,20");
     // Since From is implemented for Person, we should be able to use Into
+    // 由于为 Person 实现了 From 特征，因此应该能够使用 Into
     let p2: Person = "Gerald,70".into();
     println!("{:?}", p1);
     println!("{:?}", p2);

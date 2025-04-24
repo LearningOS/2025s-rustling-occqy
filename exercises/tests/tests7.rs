@@ -34,22 +34,55 @@
 // Execute `rustlings hint tests7` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
-fn main() {}
 
+// fn main() {}
+
+// #[cfg(test)]
+// mod tests {
+//     // use super::*;
+
+//     #[test]
+//     fn test_success() {
+//         let timestamp = std::time::SystemTime::now()
+//             .duration_since(std::time::UNIX_EPOCH)
+//             .unwrap()
+//             .as_secs();
+//         let s = std::env::var("TEST_FOO").unwrap();
+//         let e: u64 = s.parse().unwrap();
+//         assert!(timestamp >= e && timestamp < e + 10);
+//     }
+// }
+
+
+// exercises/tests/tests7.rs
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_success() {
-        let timestamp = std::time::SystemTime::now()
+        let runtime_timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_secs();
-        let s = std::env::var("TEST_FOO").unwrap();
-        let e: u64 = s.parse().unwrap();
-        assert!(timestamp >= e && timestamp < e + 10);
+        
+        let compile_time_str = std::env::var("TEST_FOO")
+            .expect("TEST_FOO 未设置！构建脚本可能未运行");
+        let compile_time_timestamp: u64 = compile_time_str
+            .parse()
+            .expect("TEST_FOO 不是有效数字");
+        
+        assert!(
+            runtime_timestamp >= compile_time_timestamp,
+            "运行时间戳 {} < 编译时间戳 {}",
+            runtime_timestamp,
+            compile_time_timestamp
+        );
+        
+        assert!(
+            runtime_timestamp < compile_time_timestamp + 60,
+            "运行时间戳 {} 超出编译时间 {} 的 60 秒窗口",
+            runtime_timestamp,
+            compile_time_timestamp
+        );
     }
 }

@@ -22,14 +22,15 @@
 // Execute `rustlings hint errors5` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
-use std::error;
-use std::fmt;
-use std::num::ParseIntError;
+
+use std::error::Error;
+use std::error;     //包含了 Rust 中错误处理的基础特征 Error，用于定义错误类型。
+use std::fmt;       //提供了格式化输出的功能，特别是用于实现 Display 特征，以便将错误信息以可读的方式输出
+use std::num::ParseIntError;   //表示将字符串解析为整数时可能出现的错误类型。
 
 // TODO: update the return type of `main()` to make this compile.
-fn main() -> Result<(), Box<dyn ???>> {
+fn main() -> Result<(), Box<dyn Error>> {       //Box<dyn Error>--特征对象
     let pretend_user_input = "42";
     let x: i64 = pretend_user_input.parse()?;
     println!("output={:?}", PositiveNonzeroInteger::new(x)?);
@@ -58,7 +59,7 @@ impl PositiveNonzeroInteger {
 }
 
 // This is required so that `CreationError` can implement `error::Error`.
-impl fmt::Display for CreationError {
+impl fmt::Display for CreationError {       //为 CreationError 枚举类型实现 fmt::Display 特征
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let description = match *self {
             CreationError::Negative => "number is negative",

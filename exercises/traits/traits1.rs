@@ -7,7 +7,7 @@
 // Execute `rustlings hint traits1` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+
 
 trait AppendBar {
     fn append_bar(self) -> Self;
@@ -15,6 +15,11 @@ trait AppendBar {
 
 impl AppendBar for String {
     // TODO: Implement `AppendBar` for type `String`.
+    // mut self：由于要修改调用该方法的 String 对象，所以使用 mut self 来获取该对象的可变所有权
+    fn append_bar(mut self) -> Self {
+        self.push_str("Bar");       // push_str() 是 String 类型的方法，用于将字符串字面量 "Bar" 追加到 self 这个 String 对象的末尾。
+        self
+    }
 }
 
 fn main() {
